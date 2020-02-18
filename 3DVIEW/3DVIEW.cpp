@@ -1,21 +1,71 @@
-﻿// 3DVIEW.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
-
-#include "pch.h"
+﻿#include "pch.h"
+#include "space.h"
 #include <iostream>
+#include <graphics.h>
+#include <Windows.h>
+
+
+Space_Creator *newspace;
+Camera *mycamera;
+tObject *cube1;
+tObject *cube2;
+void start()
+{
+	initgraph(PMX, PMY);
+	newspace = new Space_Creator();
+	mycamera = new Camera(1, PMX/2);
+	cube1 = new tObject(1, 4, 0, 0);
+	cube2 = new tObject(1, -6, 0, 0);
+	newspace->add_object(*cube1);
+	newspace->add_object(*cube2);
+}
+DWORD WINAPI display(LPVOID lpParamter)
+{
+	float pi = 0;
+	while (1)
+	{
+		pi += 0.01;
+		cube1->move(sin(pi) / 10, sin(pi)/10, 0);
+		cube1->rotate(1, 0.01);
+		cube1->rotate(2, 0.01);
+		cube1->rotate(3, 0.01);
+		cube2->move(sin(pi) / 10, cos(pi) / 10, 0);
+		cube2->rotate(1, 0.01);
+		cube2->rotate(2, 0.01);
+		cube2->rotate(3, 0.01);
+		mycamera->draw(newspace->theObjects);
+		Sleep(10);
+	}
+}
+
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	start();
+	HANDLE hThread = CreateThread(NULL, 0, display, NULL, 0, NULL);
+	CloseHandle(hThread);
+	MOUSEMSG m;
+	int msg_x=PMX/2;
+	int msg_y=PMY/2;
+
+	while (true)
+	{
+		m = GetMouseMsg();
+
+		switch (m.uMsg)
+		{
+		case WM_MOUSEMOVE:
+			mycamera->rotate(1, (m.x - msg_x)*0.01);
+			mycamera->rotate(2, -(m.y - msg_y)*0.01);
+			msg_x = m.x;
+			msg_y = m.y;
+			break;
+
+		case WM_RBUTTONUP:
+			return 0;
+		}
+	}
+
+	closegraph();
+	return 0;
 }
-
-// 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
-// 调试程序: F5 或调试 >“开始调试”菜单
-
-// 入门提示: 
-//   1. 使用解决方案资源管理器窗口添加/管理文件
-//   2. 使用团队资源管理器窗口连接到源代码管理
-//   3. 使用输出窗口查看生成输出和其他消息
-//   4. 使用错误列表窗口查看错误
-//   5. 转到“项目”>“添加新项”以创建新的代码文件，或转到“项目”>“添加现有项”以将现有代码文件添加到项目
-//   6. 将来，若要再次打开此项目，请转到“文件”>“打开”>“项目”并选择 .sln 文件
