@@ -3,6 +3,7 @@
 #include <iostream>
 #include <graphics.h>
 #include <Windows.h>
+#include <conio.h>
 
 
 Space_Creator *newspace;
@@ -25,11 +26,11 @@ DWORD WINAPI display(LPVOID lpParamter)
 	while (1)
 	{
 		pi += 0.01;
-		cube1->move(sin(pi) / 10, sin(pi)/10, 0);
+		cube1->move(sin(pi) / 10, sin(pi)/10, 0, 1);
 		cube1->rotate(1, 0.01);
 		cube1->rotate(2, 0.01);
 		cube1->rotate(3, 0.01);
-		cube2->move(sin(pi) / 10, cos(pi) / 10, 0);
+		cube2->move(sin(pi) / 10, cos(pi) / 10, 0, 1);
 		cube2->rotate(1, 0.01);
 		cube2->rotate(2, 0.01);
 		cube2->rotate(3, 0.01);
@@ -38,12 +39,38 @@ DWORD WINAPI display(LPVOID lpParamter)
 	}
 }
 
+DWORD WINAPI control(LPVOID lpParamter)
+{
+	char a;
+	while (1)
+	{
+		a = _getch();
+		switch (a)
+		{
+		case 'w':
+			mycamera->move(1, 0, 0, 2);
+			break;
+		case 's':
+			mycamera->move(-1, 0, 0, 2);
+			break;
+		case 'a':
+			mycamera->move(0, -1, 0, 2);
+			break;
+		case 'd':
+			mycamera->move(0, 1, 0, 2);
+			break;
+		}
+	}
+}
+
 
 int main()
 {
 	start();
-	HANDLE hThread = CreateThread(NULL, 0, display, NULL, 0, NULL);
-	CloseHandle(hThread);
+	HANDLE hThread1 = CreateThread(NULL, 0, display, NULL, 0, NULL);
+	CloseHandle(hThread1);
+	HANDLE hThread2 = CreateThread(NULL, 0, control, NULL, 0, NULL);
+	CloseHandle(hThread2);
 	MOUSEMSG m;
 	int msg_x=PMX/2;
 	int msg_y=PMY/2;

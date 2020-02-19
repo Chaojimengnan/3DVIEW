@@ -32,10 +32,19 @@ void pureObj::rotate(int axis, float angel)
 		break;
 	}
 }
-void pureObj::move(float x, float y, float z)
+void pureObj::move(float x, float y, float z,int spaceTo)
 {
 	Vector1x3 temp(x, y, z);
-	theCenterPoint = theCenterPoint + temp;
+	if (spaceTo == 1)
+		theCenterPoint = theCenterPoint + temp;
+	if (spaceTo == 2)
+	{
+		Matrix3x3 a(xy_theta, 1);
+		Matrix3x3 b(xz_theta, 2);
+		Matrix3x3 c(yz_theta, 3);
+		temp = a * b * c * temp;
+		theCenterPoint = theCenterPoint + temp;
+	}
 }
 Camera::Camera(float k, int pm) :pureObj(0, 0, 0)
 {

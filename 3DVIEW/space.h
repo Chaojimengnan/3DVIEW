@@ -60,7 +60,7 @@ public:
 	float yz_theta;			//
 	pureObj(float value_x, float value_y, float value_z);
 	void rotate(int axis, float angel);		//axis-1 xy		axis-2 xz	axis=3 yz
-	void move(float x, float y, float z);
+	void move(float x, float y, float z,int spaceTo);
 };
 
 class tObject :public pureObj
